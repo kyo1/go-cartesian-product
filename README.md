@@ -1,6 +1,6 @@
 # go-cartesian-product
 
-This package provides a method to generate cartesian products (like python's `itertools.product`) out of given string array.
+This package provides a method to generate cartesian products (like python's `itertools.product`) out of given slice.
 
 ## Installation
 
@@ -10,51 +10,91 @@ go get github.com/kyo1/go-cartesian-product
 
 ## Usage
 
+
+### `func All(ctx context.Context, set []interface{}) chan []interface{}`
+
+`All` function generates elements of all n-fold Cartesian product.
+
 ```go
 package main
 
 import (
-	"fmt"
-	"github.com/kyo1/go-cartesian-product"
-	"strings"
+    "fmt"
+    "github.com/kyo1/go-cartesian-product"
 )
 
 func main() {
-	chars := []string{"a", "b", "c"}
+    chars := []interface{}{"a", "b", "c"}
 
-	// Generate a Cartesian product of all length
-	all := cartesian.All(chars)
-	for i := 0; i < 10; i++ {
-		fmt.Println(strings.Join(all(), ""))
-	}
+    // Generate a Cartesian product of all length
+    cnt := 0
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
 
-	fmt.Println()
+    for s := range All(ctx, chars) {
+        fmt.Println(s)
+        cnt++
 
-	// Generate a Cartesian product of length n (now n = 2)
-	for _, product := range cartesian.Product(chars, 2) {
-		fmt.Println(strings.Join(product, ""))
-	}
+        // Conditions for stopping the generator
+        if cnt == 10 {
+            cancel()
+            continue
+        }
+    }
 
-	// Output
-	// a
-	// b
-	// c
-	// aa
-	// ba
-	// ca
-	// ab
-	// bb
-	// cb
-	// ac
-	//
-	// aa
-	// ba
-	// ca
-	// ab
-	// bb
-	// cb
-	// ac
-	// bc
-	// cc
+    // Output
+
+    // [a]
+    // [b]
+    // [c]
+    // [a b]
+    // [b b]
+    // [c b]
+    // [a c]
+    // [b c]
+    // [c c]
+    // [a a b]
+}
+```
+
+### `func Product(ctx context.Context, set []interface{}, repeat int) chan []interface{}`
+
+`Product` function generates elements of n-fold Cartesian product.
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/kyo1/go-cartesian-product"
+)
+
+func main() {
+    chars := []interface{}{"a", "b", "c"}
+
+    // Generates n-fold Cartesian product
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
+
+    for s := range Product(ctx, chars, 2) {
+        fmt.Println(s)
+
+        // The condition for terminating the generator is not required
+        // if condition {
+        //  cancel()
+        //  continue
+        // }
+    }
+
+    // Output
+    // [a a]
+    // [b a]
+    // [c a]
+    // [a b]
+    // [b b]
+    // [c b]
+    // [a c]
+    // [b c]
+    // [c c]
 }
 ```
