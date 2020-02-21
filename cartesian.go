@@ -1,54 +1,92 @@
 package cartesian
 
-func All(set []string) func() []string {
-	var positions []int = []int{0}
+import (
+	"context"
+)
 
-	return func() (element []string) {
-		for _, pos := range positions {
-			element = append(element, set[pos])
-		}
+func All(ctx context.Context, set []interface{}) chan []interface{} {
+	ch := make(chan []interface{})
 
-		for i := 0; i < len(positions); i++ {
-			positions[i]++
-			if positions[i] == len(set) {
-				positions[i] = 0
-				if i == len(positions)-1 {
-					positions = append(positions, 0)
+	go func() {
+		defer close(ch)
+
+		sz := 1
+		pos := make([]int, sz)
+
+		for {
+			if ctx != nil {
+				// stop generator, if context was cancelled
+				select {
+				case <-ctx.Done():
+					return
+				default:
+				}
+			}
+
+			// construct pair from set
+			pair := make([]interface{}, sz)
+			for i, p := range pos {
+				pair[i] = set[p]
+			}
+			ch <- pair
+
+			for i := 0; i < sz; i++ {
+				pos[i]++
+				if pos[i] != len(set) {
 					break
 				}
-				continue
+				if i == sz-1 {
+					pos = append(pos, 0)
+					sz++
+				}
+				pos[i] = 0
 			}
-			break
 		}
+	}()
 
-		return element
-	}
+	return ch
 }
 
-func Product(set []string, length int) (product [][]string) {
-	var positions []int = make([]int, length)
+func Product(ctx context.Context, set []interface{}, repeat int) chan []interface{} {
+	ch := make(chan []interface{})
 
-	for {
-		var pair []string
-		for _, pos := range positions {
-			pair = append(pair, set[pos])
-		}
-		product = append(product, pair)
+	go func() {
+		defer close(ch)
 
-		var count int // Count the number of carry
-		for i := 0; i < length; i++ {
-			positions[i]++
-			if positions[i] == len(set) {
-				positions[i] = 0
-				count++
-				continue
+		pos := make([]int, repeat)
+
+		for {
+			if ctx != nil {
+				// stop generator, if context was cancelled
+				select {
+				case <-ctx.Done():
+					return
+				default:
+				}
 			}
-			break
-		}
 
-		if count == length {
-			break
+			// construct pair from set
+			pair := make([]interface{}, repeat)
+			for i, p := range pos {
+				pair[i] = set[p]
+			}
+			ch <- pair
+
+			cnt := 0
+			for i := 0; i < repeat; i++ {
+				pos[i]++
+				if pos[i] != len(set) {
+					break
+				}
+				pos[i] = 0
+				cnt++
+			}
+
+			if cnt == repeat {
+				break
+			}
 		}
-	}
-	return product
+	}()
+
+	return ch
 }
