@@ -10,8 +10,7 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 	go func() {
 		defer close(ch)
 
-		sz := 1
-		pos := make([]int, sz)
+		pos := make([]int, 1)
 
 		for {
 			if ctx != nil {
@@ -22,20 +21,19 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 				}
 			}
 
-			pair := make([]interface{}, sz)
+			pair := make([]interface{}, len(pos))
 			for i, p := range pos {
 				pair[i] = set[p]
 			}
 			ch <- pair
 
-			for i := 0; i < sz; i++ {
+			for i := 0; i < len(pos); i++ {
 				pos[i]++
 				if pos[i] != len(set) {
 					break
 				}
-				if i == sz-1 {
+				if i == len(pos)-1 {
 					pos = append(pos, 0)
-					sz++
 				}
 				pos[i] = 0
 			}
