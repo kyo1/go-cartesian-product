@@ -15,7 +15,6 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 
 		for {
 			if ctx != nil {
-				// stop generator, if context was cancelled
 				select {
 				case <-ctx.Done():
 					return
@@ -23,7 +22,6 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 				}
 			}
 
-			// construct pair from set
 			pair := make([]interface{}, sz)
 			for i, p := range pos {
 				pair[i] = set[p]
@@ -57,7 +55,6 @@ func Product(ctx context.Context, set []interface{}, repeat int) chan []interfac
 
 		for {
 			if ctx != nil {
-				// stop generator, if context was cancelled
 				select {
 				case <-ctx.Done():
 					return
@@ -65,7 +62,6 @@ func Product(ctx context.Context, set []interface{}, repeat int) chan []interfac
 				}
 			}
 
-			// construct pair from set
 			pair := make([]interface{}, repeat)
 			for i, p := range pos {
 				pair[i] = set[p]
