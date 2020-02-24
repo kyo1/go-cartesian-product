@@ -31,7 +31,7 @@ func main() {
     ctx, cancel := context.WithCancel(context.Background())
     defer cancel()
 
-    for s := range All(ctx, chars) {
+    for s := range cartesian.All(ctx, chars) {
         fmt.Println(s)
         cnt++
 
@@ -76,7 +76,7 @@ func main() {
     ctx, cancel := context.WithCancel(context.Background())
     defer cancel()
 
-    for s := range Product(ctx, chars, 2) {
+    for s := range cartesian.Product(ctx, chars, 2) {
         fmt.Println(s)
 
         // The condition for terminating the generator is not required
