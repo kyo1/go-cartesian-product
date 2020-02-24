@@ -32,10 +32,11 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 				if pos[i] != len(set) {
 					break
 				}
+				pos[i] = 0
 				if i == len(pos)-1 {
 					pos = append(pos, 0)
+					break
 				}
-				pos[i] = 0
 			}
 		}
 	}()
