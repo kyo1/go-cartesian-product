@@ -23,7 +23,7 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 
 			pair := make([]interface{}, len(pos))
 			for i, p := range pos {
-				pair[i] = set[p]
+				pair[len(pos)-i-1] = set[p] // dictionary order
 			}
 			ch <- pair
 
@@ -63,7 +63,7 @@ func Product(ctx context.Context, set []interface{}, repeat int) chan []interfac
 
 			pair := make([]interface{}, repeat)
 			for i, p := range pos {
-				pair[i] = set[p]
+				pair[repeat-i-1] = set[p] // dictionary order
 			}
 			ch <- pair
 
