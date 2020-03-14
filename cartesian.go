@@ -28,7 +28,7 @@ func All(ctx context.Context, set []interface{}) chan []interface{} {
 			ch <- pair
 
 			for i := 0; i < len(pos); i++ {
-				pos[i]++
+				pos[i]++ // pos[i] = (pos[i] + 1) % len(set) is slow
 				if pos[i] != len(set) {
 					break
 				}
@@ -69,7 +69,7 @@ func Product(ctx context.Context, set []interface{}, repeat int) chan []interfac
 
 			cnt := 0
 			for i := 0; i < repeat; i++ {
-				pos[i]++
+				pos[i]++ // pos[i] = (pos[i] + 1) % len(set) is slow
 				if pos[i] != len(set) {
 					break
 				}
