@@ -19,41 +19,43 @@ go get github.com/kyo1/go-cartesian-product
 package main
 
 import (
-    "fmt"
-    "github.com/kyo1/go-cartesian-product"
+	"context"
+	"fmt"
+
+	"github.com/kyo1/go-cartesian-product"
 )
 
 func main() {
-    chars := []interface{}{"a", "b", "c"}
+	chars := []interface{}{"a", "b", "c"}
 
-    // Generate a Cartesian product of all length
-    cnt := 0
-    ctx, cancel := context.WithCancel(context.Background())
-    defer cancel()
+	// Generate a Cartesian product of all length
+	cnt := 0
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-    for s := range cartesian.All(ctx, chars) {
-        fmt.Println(s)
-        cnt++
+	for s := range cartesian.All(ctx, chars) {
+		fmt.Println(s)
+		cnt++
 
-        // Conditions for stopping the generator
-        if cnt == 10 {
-            cancel()
-            continue
-        }
-    }
+		// Conditions for stopping the generator
+		if cnt == 10 {
+			cancel()
+			continue
+		}
+	}
 
-    // Output
+	// Output
 
-    // [a]
-    // [b]
-    // [c]
-    // [a b]
-    // [b b]
-    // [c b]
-    // [a c]
-    // [b c]
-    // [c c]
-    // [a a b]
+	// [a]
+	// [b]
+	// [c]
+	// [a b]
+	// [b b]
+	// [c b]
+	// [a c]
+	// [b c]
+	// [c c]
+	// [a a b]
 }
 ```
 
@@ -65,36 +67,38 @@ func main() {
 package main
 
 import (
-    "fmt"
-    "github.com/kyo1/go-cartesian-product"
+	"context"
+	"fmt"
+
+	"github.com/kyo1/go-cartesian-product"
 )
 
 func main() {
-    chars := []interface{}{"a", "b", "c"}
+	chars := []interface{}{"a", "b", "c"}
 
-    // Generates n-fold Cartesian product
-    ctx, cancel := context.WithCancel(context.Background())
-    defer cancel()
+	// Generates n-fold Cartesian product
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-    for s := range cartesian.Product(ctx, chars, 2) {
-        fmt.Println(s)
+	for s := range cartesian.Product(ctx, chars, 2) {
+		fmt.Println(s)
 
-        // The condition for terminating the generator is not required
-        // if condition {
-        //  cancel()
-        //  continue
-        // }
-    }
+		// The condition for terminating the generator is not required
+		// if condition {
+		//  cancel()
+		//  continue
+		// }
+	}
 
-    // Output
-    // [a a]
-    // [b a]
-    // [c a]
-    // [a b]
-    // [b b]
-    // [c b]
-    // [a c]
-    // [b c]
-    // [c c]
+	// Output
+	// [a a]
+	// [b a]
+	// [c a]
+	// [a b]
+	// [b b]
+	// [c b]
+	// [a c]
+	// [b c]
+	// [c c]
 }
 ```
